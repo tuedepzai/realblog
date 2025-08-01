@@ -16,7 +16,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Build App
-        run: npm run build 
+        run: npm run build
+      - name: Add 404 fallback for GitHub Pages
+        run: cp dist/index.html dist/404.html
       - name: Archive artifact
         shell: sh
         run: |
@@ -35,19 +37,13 @@ jobs:
           if-no-files-found: error
 
   deploy:
-    # Chờ "build" xong mới chạy "deploy"
     needs: build
-
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
-
-    # Deploy to the github-pages environment
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
